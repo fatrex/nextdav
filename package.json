@@ -1,7 +1,7 @@
 {
   "name": "nextdav",
   "type": "module",
-  "version": "0.0.1-dev",
+  "version": "0.0.2-dev",
   "description": "A WebDav client specifically created for Nextcloud",
   "main": "dist/cjs/index.js",
   "module": "dist/mjs/index.js",

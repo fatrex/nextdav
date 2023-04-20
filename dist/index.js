@@ -73,29 +73,39 @@ var nextdav = class {
     return parser.parse(xmlData);
   }
   buildContentsObject(xmlString) {
-    var _a, _b, _c, _d, _e;
     const data = this.parseXml(xmlString);
     const collections = [];
     const files = [];
     if (data.multistatus && data.multistatus.response) {
-      const nonRootContents = data.multistatus.response.splice(1);
+      let nonRootContents;
+      if (!Array.isArray(data.multistatus.response)) {
+        nonRootContents = [];
+      } else {
+        nonRootContents = data.multistatus.response.splice(1);
+      }
       for (const content of nonRootContents) {
-        if (((_a = content.propstat.at(0)) == null ? void 0 : _a.prop.resourcetype) !== "") {
+        let propstat;
+        if (Array.isArray(content.propstat)) {
+          propstat = content.propstat[0];
+        } else {
+          propstat = content.propstat;
+        }
+        if (propstat.prop.resourcetype !== "") {
           const name = content.href.split("/").at(-2);
           if (name) {
             collections.push({
               name,
-              lastmod: (_b = content.propstat.at(0)) == null ? void 0 : _b.prop.getlastmodified
+              lastmod: propstat.prop.getlastmodified
             });
           }
         } else {
           const name = content.href.split("/").at(-1);
-          const mime = (_c = content.propstat.at(0)) == null ? void 0 : _c.prop.getcontenttype;
-          const length = Number((_d = content.propstat.at(0)) == null ? void 0 : _d.prop.getcontentlength);
+          const mime = propstat.prop.getcontenttype;
+          const length = Number(propstat.prop.getcontentlength);
           if (name && mime && length) {
             files.push({
               name,
-              lastmod: (_e = content.propstat.at(0)) == null ? void 0 : _e.prop.getlastmodified,
+              lastmod: propstat.prop.getlastmodified,
               mime,
               length,
               extension: name.split(".").at(-1) || ""

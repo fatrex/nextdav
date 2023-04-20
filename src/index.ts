@@ -20,6 +20,9 @@ export default class nextdav {
     this.basicAuth = Buffer.from(`${username}:${password}`).toString('base64');
   }
 
+  /**
+   * Create WebDav client
+   */
   private async getClient(): Promise<Got> {
     const gotModule = await import('got');
     return gotModule.default.extend({
@@ -34,14 +37,22 @@ export default class nextdav {
     });
   }
 
-  async getCollectionContents(path = '/'): Promise<[Collection[], File[]]> {
+  /**
+   * Retrive contents of the provided folder
+   */
+  async getCollectionContents(
+    path = '/',
+  ): Promise<[Collection[], File[]] | boolean> {
     const fullUrl = join(this.url, path);
     const client = await this.getClient();
-    const rawResponse = await client(fullUrl, {
-      method: 'PROPFIND' as Method,
-    });
-
-    return this.buildContentsObject(rawResponse.body.toString());
+    try {
+      const rawResponse = await client(fullUrl, {
+        method: 'PROPFIND' as Method,
+      });
+      return this.buildContentsObject(rawResponse.body.toString());
+    } catch (error) {
+      return false;
+    }
   }
 
   private parseXml(xmlData: string): XMLBody {

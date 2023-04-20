@@ -3,6 +3,8 @@ import https from 'https';
 import crypto from 'crypto';
 import { XMLParser } from 'fast-xml-parser';
 export default class nextdav {
+    url;
+    basicAuth;
     constructor(url, username, password) {
         this.url = url;
         this.basicAuth = Buffer.from(`${username}:${password}`).toString('base64');
@@ -38,30 +40,29 @@ export default class nextdav {
         return parser.parse(xmlData);
     }
     buildContentsObject(xmlString) {
-        var _a, _b, _c, _d, _e;
         const data = this.parseXml(xmlString);
         const collections = [];
         const files = [];
         if (data.multistatus && data.multistatus.response) {
             const nonRootContents = data.multistatus.response.splice(1);
             for (const content of nonRootContents) {
-                if (((_a = content.propstat.at(0)) === null || _a === void 0 ? void 0 : _a.prop.resourcetype) !== '') {
+                if (content.propstat.at(0)?.prop.resourcetype !== '') {
                     const name = content.href.split('/').at(-2);
                     if (name) {
                         collections.push({
                             name,
-                            lastmod: (_b = content.propstat.at(0)) === null || _b === void 0 ? void 0 : _b.prop.getlastmodified,
+                            lastmod: content.propstat.at(0)?.prop.getlastmodified,
                         });
                     }
                 }
                 else {
                     const name = content.href.split('/').at(-1);
-                    const mime = (_c = content.propstat.at(0)) === null || _c === void 0 ? void 0 : _c.prop.getcontenttype;
-                    const length = Number((_d = content.propstat.at(0)) === null || _d === void 0 ? void 0 : _d.prop.getcontentlength);
+                    const mime = content.propstat.at(0)?.prop.getcontenttype;
+                    const length = Number(content.propstat.at(0)?.prop.getcontentlength);
                     if (name && mime && length) {
                         files.push({
                             name,
-                            lastmod: (_e = content.propstat.at(0)) === null || _e === void 0 ? void 0 : _e.prop.getlastmodified,
+                            lastmod: content.propstat.at(0)?.prop.getlastmodified,
                             mime,
                             length,
                             extension: name.split('.').at(-1) || '',

@@ -15,7 +15,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-    "watch": "watch 'npm run build' ./src"
+    "dev": "npm run build -- --watch"
   },
   "keywords": [],
   "author": "Daniele Lenares <daniele@lenares.me>",
@@ -28,7 +28,6 @@
     "@types/node": "^18.15.12",
     "prettier": "2.8.7",
     "tsup": "^6.7.0",
-    "typescript": "^5.0.4",
-    "watch": "^1.0.2"
+    "typescript": "^5.0.4"
   }
 }

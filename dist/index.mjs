@@ -8,6 +8,9 @@ var nextdav = class {
     this.url = url;
     this.basicAuth = Buffer.from(`${username}:${password}`).toString("base64");
   }
+  /**
+   * Create WebDav client
+   */
   async getClient() {
     const gotModule = await import("got");
     return gotModule.default.extend({
@@ -21,13 +24,20 @@ var nextdav = class {
       }
     });
   }
+  /**
+   * Retrive contents of the provided folder
+   */
   async getCollectionContents(path = "/") {
     const fullUrl = join(this.url, path);
     const client = await this.getClient();
-    const rawResponse = await client(fullUrl, {
-      method: "PROPFIND"
-    });
-    return this.buildContentsObject(rawResponse.body.toString());
+    try {
+      const rawResponse = await client(fullUrl, {
+        method: "PROPFIND"
+      });
+      return this.buildContentsObject(rawResponse.body.toString());
+    } catch (error) {
+      return false;
+    }
   }
   parseXml(xmlData) {
     const parser = new XMLParser({

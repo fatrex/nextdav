@@ -1,5 +1,16 @@
-import { Collection, File } from './interfaces.js';
-export default class nextdav {
+interface Collection {
+    name: string;
+    lastmod?: Date;
+}
+interface File {
+    name: string;
+    lastmod?: Date;
+    mime: string;
+    length: number;
+    extension: string;
+}
+
+declare class nextdav {
     private url;
     private basicAuth;
     constructor(url: string, username: string, password: string);
@@ -8,3 +19,5 @@ export default class nextdav {
     private parseXml;
     private buildContentsObject;
 }
+
+export { nextdav as default };

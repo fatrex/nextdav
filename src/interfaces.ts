@@ -10,7 +10,7 @@ export interface XMLPropstat {
 
 export interface XMLResponse {
   href: string;
-  propstat: XMLPropstat[];
+  propstat: XMLPropstat | XMLPropstat[];
 }
 
 export interface XMLMultistatus {

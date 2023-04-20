@@ -3,7 +3,7 @@ import https from 'https';
 import crypto from 'crypto';
 import { Got, Method } from 'got';
 import { XMLParser } from 'fast-xml-parser';
-import { Collection, File, XMLBody } from './interfaces.js';
+import { Collection, File, XMLBody, XMLPropstat } from './interfaces.js';
 
 export default class nextdav {
   private url: string;
@@ -55,22 +55,29 @@ export default class nextdav {
     if (data.multistatus && data.multistatus.response) {
       const nonRootContents = data.multistatus.response.splice(1);
       for (const content of nonRootContents) {
-        if (content.propstat.at(0)?.prop.resourcetype !== '') {
+        let propstat: XMLPropstat;
+        if (Array.isArray(content.propstat)) {
+          propstat = content.propstat[0];
+        } else {
+          propstat = content.propstat;
+        }
+
+        if (propstat.prop.resourcetype !== '') {
           const name = content.href.split('/').at(-2);
           if (name) {
             collections.push({
               name,
-              lastmod: content.propstat.at(0)?.prop.getlastmodified,
+              lastmod: propstat.prop.getlastmodified,
             });
           }
         } else {
           const name = content.href.split('/').at(-1);
-          const mime = content.propstat.at(0)?.prop.getcontenttype;
-          const length = Number(content.propstat.at(0)?.prop.getcontentlength);
+          const mime = propstat.prop.getcontenttype;
+          const length = Number(propstat.prop.getcontentlength);
           if (name && mime && length) {
             files.push({
               name,
-              lastmod: content.propstat.at(0)?.prop.getlastmodified,
+              lastmod: propstat.prop.getlastmodified,
               mime,
               length,
               extension: name.split('.').at(-1) || '',

@@ -2,7 +2,6 @@
 import { join } from "path";
 import https from "https";
 import crypto from "crypto";
-import got from "got";
 import { XMLParser } from "fast-xml-parser";
 var nextdav = class {
   constructor(url, username, password) {
@@ -10,7 +9,8 @@ var nextdav = class {
     this.basicAuth = Buffer.from(`${username}:${password}`).toString("base64");
   }
   async getClient() {
-    return got.extend({
+    const gotModule = await import("got");
+    return gotModule.default.extend({
       headers: {
         Authorization: `Basic ${this.basicAuth}`
       },

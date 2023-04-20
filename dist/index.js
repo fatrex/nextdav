@@ -36,7 +36,6 @@ module.exports = __toCommonJS(src_exports);
 var import_path = require("path");
 var import_https = __toESM(require("https"));
 var import_crypto = __toESM(require("crypto"));
-var import_got = __toESM(require("got"));
 var import_fast_xml_parser = require("fast-xml-parser");
 var nextdav = class {
   constructor(url, username, password) {
@@ -44,7 +43,8 @@ var nextdav = class {
     this.basicAuth = Buffer.from(`${username}:${password}`).toString("base64");
   }
   async getClient() {
-    return import_got.default.extend({
+    const gotModule = await import("got");
+    return gotModule.default.extend({
       headers: {
         Authorization: `Basic ${this.basicAuth}`
       },

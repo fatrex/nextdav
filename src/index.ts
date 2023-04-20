@@ -3,7 +3,13 @@ import https from 'https';
 import crypto from 'crypto';
 import { Got, Method } from 'got';
 import { XMLParser } from 'fast-xml-parser';
-import { Collection, File, XMLBody, XMLPropstat } from './interfaces.js';
+import {
+  Collection,
+  File,
+  XMLBody,
+  XMLPropstat,
+  XMLResponse,
+} from './interfaces.js';
 
 export default class nextdav {
   private url: string;
@@ -53,7 +59,14 @@ export default class nextdav {
     const collections: Collection[] = [];
     const files: File[] = [];
     if (data.multistatus && data.multistatus.response) {
-      const nonRootContents = data.multistatus.response.splice(1);
+      let nonRootContents: XMLResponse[];
+      if (!Array.isArray(data.multistatus.response)) {
+        // This means there's only the root folder so no othe content is available
+        nonRootContents = [];
+      } else {
+        // There are other entries besides the root folder that we remove from the collection
+        nonRootContents = data.multistatus.response.splice(1);
+      }
       for (const content of nonRootContents) {
         let propstat: XMLPropstat;
         if (Array.isArray(content.propstat)) {

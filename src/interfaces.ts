@@ -14,7 +14,7 @@ export interface XMLResponse {
 }
 
 export interface XMLMultistatus {
-  response: XMLResponse[];
+  response: XMLResponse | XMLResponse[];
 }
 
 export interface XMLBody {

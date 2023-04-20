@@ -1,7 +1,7 @@
 import { join } from 'path';
 import https from 'https';
 import crypto from 'crypto';
-import got, { Got, Method } from 'got';
+import { Got, Method } from 'got';
 import { XMLParser } from 'fast-xml-parser';
 import { Collection, File, XMLBody } from './interfaces.js';
 
@@ -15,7 +15,8 @@ export default class nextdav {
   }
 
   private async getClient(): Promise<Got> {
-    return got.extend({
+    const gotModule = await import('got');
+    return gotModule.default.extend({
       headers: {
         Authorization: `Basic ${this.basicAuth}`,
       },

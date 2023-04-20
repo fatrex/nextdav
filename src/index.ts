@@ -51,6 +51,7 @@ export default class nextdav {
       });
       return this.buildContentsObject(rawResponse.body.toString());
     } catch (error) {
+      console.error('[nextdav error] ' + error + '');
       return false;
     }
   }

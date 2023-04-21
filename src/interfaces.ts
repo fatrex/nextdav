@@ -21,6 +21,20 @@ export interface XMLBody {
   multistatus: XMLMultistatus;
 }
 
+export interface Proxy {
+  host: string;
+  port: number;
+}
+export interface SocksProxy extends Proxy {
+  protocol: 'socks5' | 'socks4';
+}
+
+export interface Options {
+  httpProxy?: Proxy;
+  httpsProxy?: Proxy;
+  socksProxy?: SocksProxy;
+}
+
 export interface Collection {
   name: string;
   lastmod?: Date;

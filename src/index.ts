@@ -3,9 +3,13 @@ import https from 'https';
 import crypto from 'crypto';
 import { Got, Method } from 'got';
 import { XMLParser } from 'fast-xml-parser';
+import HttpProxyAgent from 'http-proxy-agent';
+import HttpsProxyAgent from 'https-proxy-agent';
+import { SocksProxyAgent } from 'socks-proxy-agent';
 import {
   Collection,
   File,
+  Options,
   XMLBody,
   XMLPropstat,
   XMLResponse,
@@ -13,10 +17,17 @@ import {
 
 export default class nextdav {
   private url: string;
+  private options?: Options;
   private basicAuth: string;
 
-  constructor(url: string, username: string, password: string) {
+  constructor(
+    url: string,
+    username: string,
+    password: string,
+    options?: Options,
+  ) {
     this.url = url;
+    this.options = options;
     this.basicAuth = Buffer.from(`${username}:${password}`).toString('base64');
   }
 
@@ -25,14 +36,37 @@ export default class nextdav {
    */
   private async getClient(): Promise<Got> {
     const gotModule = await import('got');
+
+    let httpAgent: https.Agent | false | undefined;
+    if (this.options?.httpProxy) {
+      httpAgent = HttpProxyAgent(this.options.httpProxy);
+    }
+
+    let httpsAgent: https.Agent | false | undefined;
+    if (this.options?.httpsProxy) {
+      httpsAgent = HttpsProxyAgent({
+        host: this.options.httpsProxy.host,
+        port: this.options.httpsProxy.port,
+        secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+      });
+    }
+    console.log(this.options);
+    if (this.options?.socksProxy) {
+      httpAgent = new SocksProxyAgent(
+        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`,
+      );
+      httpsAgent = new SocksProxyAgent(
+        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`,
+      );
+    }
+
     return gotModule.default.extend({
       headers: {
         Authorization: `Basic ${this.basicAuth}`,
       },
       agent: {
-        https: new https.Agent({
-          secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
-        }),
+        https: httpsAgent,
+        http: httpAgent,
       },
     });
   }

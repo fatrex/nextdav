@@ -22,7 +22,10 @@
   "license": "ISC",
   "dependencies": {
     "fast-xml-parser": "^4.2.2",
-    "got": "^12.6.0"
+    "got": "^12.6.0",
+    "http-proxy-agent": "^5.0.0",
+    "https-proxy-agent": "^5.0.1",
+    "socks-proxy-agent": "^7.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.15.12",

@@ -1,7 +1,6 @@
 // src/nextdav.class.ts
 import { URL } from "url";
 import { join, basename, dirname } from "path";
-import crypto from "crypto";
 import { XMLParser } from "fast-xml-parser";
 import HttpProxyAgent from "http-proxy-agent";
 import HttpsProxyAgent from "https-proxy-agent";
@@ -16,27 +15,34 @@ var nextdav = class {
    * Create WebDav client
    */
   async getClient() {
-    var _a, _b, _c;
+    var _a;
     const gotModule = await import("got");
     let httpAgent;
-    if ((_a = this.options) == null ? void 0 : _a.httpProxy) {
-      httpAgent = HttpProxyAgent(this.options.httpProxy);
-    }
     let httpsAgent;
-    if ((_b = this.options) == null ? void 0 : _b.httpsProxy) {
-      httpsAgent = HttpsProxyAgent({
-        host: this.options.httpsProxy.host,
-        port: this.options.httpsProxy.port,
-        secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT
-      });
-    }
-    if ((_c = this.options) == null ? void 0 : _c.socksProxy) {
-      httpAgent = new SocksProxyAgent(
-        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`
-      );
-      httpsAgent = new SocksProxyAgent(
-        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`
-      );
+    if ((_a = this.options) == null ? void 0 : _a.proxy) {
+      switch (this.options.proxy.protocol) {
+        case "http":
+          httpAgent = HttpProxyAgent({
+            host: this.options.proxy.host,
+            port: this.options.proxy.port
+          });
+          break;
+        case "https":
+          httpsAgent = HttpsProxyAgent({
+            host: this.options.proxy.host,
+            port: this.options.proxy.port
+          });
+          break;
+        case "socks4":
+        case "socks5":
+          httpAgent = new SocksProxyAgent(
+            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`
+          );
+          httpsAgent = new SocksProxyAgent(
+            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`
+          );
+          break;
+      }
     }
     return gotModule.default.extend({
       headers: {

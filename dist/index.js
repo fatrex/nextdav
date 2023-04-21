@@ -37,7 +37,6 @@ module.exports = __toCommonJS(src_exports);
 // src/nextdav.class.ts
 var import_url = require("url");
 var import_path = require("path");
-var import_crypto = __toESM(require("crypto"));
 var import_fast_xml_parser = require("fast-xml-parser");
 var import_http_proxy_agent = __toESM(require("http-proxy-agent"));
 var import_https_proxy_agent = __toESM(require("https-proxy-agent"));
@@ -52,27 +51,34 @@ var nextdav = class {
    * Create WebDav client
    */
   async getClient() {
-    var _a, _b, _c;
+    var _a;
     const gotModule = await import("got");
     let httpAgent;
-    if ((_a = this.options) == null ? void 0 : _a.httpProxy) {
-      httpAgent = (0, import_http_proxy_agent.default)(this.options.httpProxy);
-    }
     let httpsAgent;
-    if ((_b = this.options) == null ? void 0 : _b.httpsProxy) {
-      httpsAgent = (0, import_https_proxy_agent.default)({
-        host: this.options.httpsProxy.host,
-        port: this.options.httpsProxy.port,
-        secureOptions: import_crypto.default.constants.SSL_OP_LEGACY_SERVER_CONNECT
-      });
-    }
-    if ((_c = this.options) == null ? void 0 : _c.socksProxy) {
-      httpAgent = new import_socks_proxy_agent.SocksProxyAgent(
-        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`
-      );
-      httpsAgent = new import_socks_proxy_agent.SocksProxyAgent(
-        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`
-      );
+    if ((_a = this.options) == null ? void 0 : _a.proxy) {
+      switch (this.options.proxy.protocol) {
+        case "http":
+          httpAgent = (0, import_http_proxy_agent.default)({
+            host: this.options.proxy.host,
+            port: this.options.proxy.port
+          });
+          break;
+        case "https":
+          httpsAgent = (0, import_https_proxy_agent.default)({
+            host: this.options.proxy.host,
+            port: this.options.proxy.port
+          });
+          break;
+        case "socks4":
+        case "socks5":
+          httpAgent = new import_socks_proxy_agent.SocksProxyAgent(
+            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`
+          );
+          httpsAgent = new import_socks_proxy_agent.SocksProxyAgent(
+            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`
+          );
+          break;
+      }
     }
     return gotModule.default.extend({
       headers: {

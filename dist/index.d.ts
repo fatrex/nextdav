@@ -1,14 +1,10 @@
 interface Proxy {
     host: string;
     port: number;
-}
-interface SocksProxy extends Proxy {
-    protocol: 'socks5' | 'socks4';
+    protocol: 'http' | 'https' | 'socks4' | 'socks5';
 }
 interface Options {
-    httpProxy?: Proxy;
-    httpsProxy?: Proxy;
-    socksProxy?: SocksProxy;
+    proxy: Proxy;
 }
 interface Collection {
     name: string;
@@ -44,4 +40,4 @@ declare class nextdav {
     private buildContentsObject;
 }
 
-export { Collection, File, Options, Proxy, SocksProxy, nextdav as default };
+export { Collection, File, Options, Proxy, nextdav as default };

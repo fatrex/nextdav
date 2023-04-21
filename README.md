@@ -1,12 +1,11 @@
-# nextdav
+<img width="360" src="docs/logo.png" alt="Got">
 
-A WebDav client specifically created for Nextcloud
-
----
-
-### This packages is still under active development so use at your own risk!
+> A WebDav client specifically created for Nextcloud
 
 ---
+
+> **⚠ WARNING:**  
+> **This packages is still under active development so use at your own risk!**
 
 ### Installation
 

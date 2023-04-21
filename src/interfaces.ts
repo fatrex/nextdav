@@ -31,8 +31,8 @@ export interface Proxy {
 }
 
 export interface Options {
-  proxy: Proxy;
-  customAgents: {
+  proxy?: Proxy;
+  customAgents?: {
     http: http.Agent;
     https: https.Agent;
   };

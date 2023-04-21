@@ -7,8 +7,8 @@ interface Proxy {
     protocol: 'http' | 'https' | 'socks4' | 'socks5';
 }
 interface Options {
-    proxy: Proxy;
-    customAgents: {
+    proxy?: Proxy;
+    customAgents?: {
         http: http.Agent;
         https: https.Agent;
     };

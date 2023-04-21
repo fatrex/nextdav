@@ -1,3 +1,6 @@
+import http from 'http';
+import https from 'https';
+
 interface Proxy {
     host: string;
     port: number;
@@ -5,6 +8,10 @@ interface Proxy {
 }
 interface Options {
     proxy: Proxy;
+    customAgents: {
+        http: http.Agent;
+        https: https.Agent;
+    };
 }
 interface Collection {
     name: string;

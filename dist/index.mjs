@@ -15,7 +15,7 @@ var nextdav = class {
    * Create WebDav client
    */
   async getClient() {
-    var _a;
+    var _a, _b;
     const gotModule = await import("got");
     let httpAgent;
     let httpsAgent;
@@ -42,6 +42,14 @@ var nextdav = class {
             `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`
           );
           break;
+      }
+    }
+    if ((_b = this.options) == null ? void 0 : _b.customAgents) {
+      if (this.options.customAgents.http) {
+        httpAgent = this.options.customAgents.http;
+      }
+      if (this.options.customAgents.https) {
+        httpsAgent = this.options.customAgents.https;
       }
     }
     return gotModule.default.extend({

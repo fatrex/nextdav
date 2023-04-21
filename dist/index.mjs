@@ -64,6 +64,20 @@ var nextdav = class {
       return false;
     }
   }
+  /**
+   * Download file as buffer
+   */
+  async getFileAsBuffer(path) {
+    const fullUrl = join(this.url, path);
+    const client = await this.getClient();
+    try {
+      const response = await client.get(fullUrl);
+      return response.rawBody;
+    } catch (error) {
+      console.error("[nextdav error] " + error);
+      return false;
+    }
+  }
   parseXml(xmlData) {
     const parser = new XMLParser({
       ignoreAttributes: false,

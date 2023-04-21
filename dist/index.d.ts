@@ -35,6 +35,10 @@ declare class nextdav {
      * Retrive contents of the provided folder
      */
     getCollectionContents(path?: string): Promise<[Collection[], File[]] | boolean>;
+    /**
+     * Download file as buffer
+     */
+    getFileAsBuffer(path: string): Promise<Buffer | false>;
     private parseXml;
     private buildContentsObject;
 }

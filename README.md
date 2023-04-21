@@ -23,8 +23,8 @@ import nextdav from 'nextdav';
 
 // Create a client with your nextcloud username and password
 const client = new nextdav(
-  'https://example.nextcloud.dev/remote.php/dav/files/xxxxxx',
-  'youusername',
+  'https://<nextcloudhost>/remote.php/dav/files/xxxxxx',
+  'yourusername',
   'yourpassword',
 );
 
@@ -39,7 +39,7 @@ if (response) {
 
 - [x] Base client instance
 - [x] Files and folders retrieval
-- [ ] Files download
+- [x] Files download
 - [ ] Files upload
 - [ ] Files update and locks
 - [ ] Tests!

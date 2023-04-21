@@ -1,26 +1,50 @@
 // src/index.ts
 import { join } from "path";
-import https from "https";
 import crypto from "crypto";
 import { XMLParser } from "fast-xml-parser";
+import HttpProxyAgent from "http-proxy-agent";
+import HttpsProxyAgent from "https-proxy-agent";
+import { SocksProxyAgent } from "socks-proxy-agent";
 var nextdav = class {
-  constructor(url, username, password) {
+  constructor(url, username, password, options) {
     this.url = url;
+    this.options = options;
     this.basicAuth = Buffer.from(`${username}:${password}`).toString("base64");
   }
   /**
    * Create WebDav client
    */
   async getClient() {
+    var _a, _b, _c;
     const gotModule = await import("got");
+    let httpAgent;
+    if ((_a = this.options) == null ? void 0 : _a.httpProxy) {
+      httpAgent = HttpProxyAgent(this.options.httpProxy);
+    }
+    let httpsAgent;
+    if ((_b = this.options) == null ? void 0 : _b.httpsProxy) {
+      httpsAgent = HttpsProxyAgent({
+        host: this.options.httpsProxy.host,
+        port: this.options.httpsProxy.port,
+        secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT
+      });
+    }
+    console.log(this.options);
+    if ((_c = this.options) == null ? void 0 : _c.socksProxy) {
+      httpAgent = new SocksProxyAgent(
+        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`
+      );
+      httpsAgent = new SocksProxyAgent(
+        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`
+      );
+    }
     return gotModule.default.extend({
       headers: {
         Authorization: `Basic ${this.basicAuth}`
       },
       agent: {
-        https: new https.Agent({
-          secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT
-        })
+        https: httpsAgent,
+        http: httpAgent
       }
     });
   }

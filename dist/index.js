@@ -34,27 +34,51 @@ __export(src_exports, {
 });
 module.exports = __toCommonJS(src_exports);
 var import_path = require("path");
-var import_https = __toESM(require("https"));
 var import_crypto = __toESM(require("crypto"));
 var import_fast_xml_parser = require("fast-xml-parser");
+var import_http_proxy_agent = __toESM(require("http-proxy-agent"));
+var import_https_proxy_agent = __toESM(require("https-proxy-agent"));
+var import_socks_proxy_agent = require("socks-proxy-agent");
 var nextdav = class {
-  constructor(url, username, password) {
+  constructor(url, username, password, options) {
     this.url = url;
+    this.options = options;
     this.basicAuth = Buffer.from(`${username}:${password}`).toString("base64");
   }
   /**
    * Create WebDav client
    */
   async getClient() {
+    var _a, _b, _c;
     const gotModule = await import("got");
+    let httpAgent;
+    if ((_a = this.options) == null ? void 0 : _a.httpProxy) {
+      httpAgent = (0, import_http_proxy_agent.default)(this.options.httpProxy);
+    }
+    let httpsAgent;
+    if ((_b = this.options) == null ? void 0 : _b.httpsProxy) {
+      httpsAgent = (0, import_https_proxy_agent.default)({
+        host: this.options.httpsProxy.host,
+        port: this.options.httpsProxy.port,
+        secureOptions: import_crypto.default.constants.SSL_OP_LEGACY_SERVER_CONNECT
+      });
+    }
+    console.log(this.options);
+    if ((_c = this.options) == null ? void 0 : _c.socksProxy) {
+      httpAgent = new import_socks_proxy_agent.SocksProxyAgent(
+        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`
+      );
+      httpsAgent = new import_socks_proxy_agent.SocksProxyAgent(
+        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`
+      );
+    }
     return gotModule.default.extend({
       headers: {
         Authorization: `Basic ${this.basicAuth}`
       },
       agent: {
-        https: new import_https.default.Agent({
-          secureOptions: import_crypto.default.constants.SSL_OP_LEGACY_SERVER_CONNECT
-        })
+        https: httpsAgent,
+        http: httpAgent
       }
     });
   }

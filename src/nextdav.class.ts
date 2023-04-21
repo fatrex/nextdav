@@ -38,27 +38,33 @@ export default class nextdav {
   private async getClient(): Promise<Got> {
     const gotModule = await import('got');
 
+    // Handle Proxy
     let httpAgent: https.Agent | false | undefined;
-    if (this.options?.httpProxy) {
-      httpAgent = HttpProxyAgent(this.options.httpProxy);
-    }
-
     let httpsAgent: https.Agent | false | undefined;
-    if (this.options?.httpsProxy) {
-      httpsAgent = HttpsProxyAgent({
-        host: this.options.httpsProxy.host,
-        port: this.options.httpsProxy.port,
-        secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
-      });
-    }
-
-    if (this.options?.socksProxy) {
-      httpAgent = new SocksProxyAgent(
-        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`,
-      );
-      httpsAgent = new SocksProxyAgent(
-        `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`,
-      );
+    if (this.options?.proxy) {
+      switch (this.options.proxy.protocol) {
+        case 'http':
+          httpAgent = HttpProxyAgent({
+            host: this.options.proxy.host,
+            port: this.options.proxy.port,
+          });
+          break;
+        case 'https':
+          httpsAgent = HttpsProxyAgent({
+            host: this.options.proxy.host,
+            port: this.options.proxy.port,
+          });
+          break;
+        case 'socks4':
+        case 'socks5':
+          httpAgent = new SocksProxyAgent(
+            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`,
+          );
+          httpsAgent = new SocksProxyAgent(
+            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`,
+          );
+          break;
+      }
     }
 
     return gotModule.default.extend({

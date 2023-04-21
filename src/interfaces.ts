@@ -24,15 +24,11 @@ export interface XMLBody {
 export interface Proxy {
   host: string;
   port: number;
-}
-export interface SocksProxy extends Proxy {
-  protocol: 'socks5' | 'socks4';
+  protocol: 'http' | 'https' | 'socks4' | 'socks5';
 }
 
 export interface Options {
-  httpProxy?: Proxy;
-  httpsProxy?: Proxy;
-  socksProxy?: SocksProxy;
+  proxy: Proxy;
 }
 
 export interface Collection {

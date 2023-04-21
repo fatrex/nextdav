@@ -90,6 +90,21 @@ export default class nextdav {
     }
   }
 
+  /**
+   * Download file as buffer
+   */
+  async getFileAsBuffer(path: string): Promise<Buffer | false> {
+    const fullUrl = join(this.url, path);
+    const client = await this.getClient();
+    try {
+      const response = await client.get(fullUrl);
+      return response.rawBody;
+    } catch (error) {
+      console.error('[nextdav error] ' + error);
+      return false;
+    }
+  }
+
   private parseXml(xmlData: string): XMLBody {
     const parser = new XMLParser({
       ignoreAttributes: false,

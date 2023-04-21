@@ -1,7 +1,7 @@
 import { URL } from 'url';
 import { join, basename, dirname } from 'path';
+import http from 'http';
 import https from 'https';
-import crypto from 'crypto';
 import { Got, Method } from 'got';
 import { XMLParser } from 'fast-xml-parser';
 import HttpProxyAgent from 'http-proxy-agent';
@@ -38,9 +38,9 @@ export default class nextdav {
   private async getClient(): Promise<Got> {
     const gotModule = await import('got');
 
-    // Handle Proxy
-    let httpAgent: https.Agent | false | undefined;
+    let httpAgent: http.Agent | false | undefined;
     let httpsAgent: https.Agent | false | undefined;
+
     if (this.options?.proxy) {
       switch (this.options.proxy.protocol) {
         case 'http':
@@ -64,6 +64,15 @@ export default class nextdav {
             `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`,
           );
           break;
+      }
+    }
+
+    if (this.options?.customAgents) {
+      if (this.options.customAgents.http) {
+        httpAgent = this.options.customAgents.http;
+      }
+      if (this.options.customAgents.https) {
+        httpsAgent = this.options.customAgents.https;
       }
     }
 

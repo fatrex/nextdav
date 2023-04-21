@@ -1,3 +1,6 @@
+import http from 'http';
+import https from 'https';
+
 export interface XMLPropstat {
   prop: {
     getlastmodified: Date;
@@ -29,6 +32,10 @@ export interface Proxy {
 
 export interface Options {
   proxy: Proxy;
+  customAgents: {
+    http: http.Agent;
+    https: https.Agent;
+  };
 }
 
 export interface Collection {

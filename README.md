@@ -5,7 +5,7 @@
 ---
 
 > **⚠ WARNING:**  
-> **This packages is still under active development so use at your own risk!**
+> **This packages is still under heavy development so use at your own risk!**
 
 ### Installation
 

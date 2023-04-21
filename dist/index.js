@@ -30,9 +30,12 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  default: () => nextdav
+  default: () => src_default
 });
 module.exports = __toCommonJS(src_exports);
+
+// src/nextdav.class.ts
+var import_url = require("url");
 var import_path = require("path");
 var import_crypto = __toESM(require("crypto"));
 var import_fast_xml_parser = require("fast-xml-parser");
@@ -41,7 +44,7 @@ var import_https_proxy_agent = __toESM(require("https-proxy-agent"));
 var import_socks_proxy_agent = require("socks-proxy-agent");
 var nextdav = class {
   constructor(url, username, password, options) {
-    this.url = url;
+    this.url = new import_url.URL(url);
     this.options = options;
     this.basicAuth = Buffer.from(`${username}:${password}`).toString("base64");
   }
@@ -63,7 +66,6 @@ var nextdav = class {
         secureOptions: import_crypto.default.constants.SSL_OP_LEGACY_SERVER_CONNECT
       });
     }
-    console.log(this.options);
     if ((_c = this.options) == null ? void 0 : _c.socksProxy) {
       httpAgent = new import_socks_proxy_agent.SocksProxyAgent(
         `${this.options.socksProxy.protocol}://${this.options.socksProxy.host}:${this.options.socksProxy.port}`
@@ -86,7 +88,7 @@ var nextdav = class {
    * Retrive contents of the provided folder
    */
   async getCollectionContents(path = "/") {
-    const fullUrl = (0, import_path.join)(this.url, path);
+    const fullUrl = (0, import_path.join)(this.url.href, path);
     const client = await this.getClient();
     try {
       const rawResponse = await client(fullUrl, {
@@ -102,7 +104,7 @@ var nextdav = class {
    * Download file as buffer
    */
   async getFileAsBuffer(path) {
-    const fullUrl = (0, import_path.join)(this.url, path);
+    const fullUrl = (0, import_path.join)(this.url.href, path);
     const client = await this.getClient();
     try {
       const response = await client.get(fullUrl);
@@ -140,7 +142,7 @@ var nextdav = class {
           propstat = content.propstat;
         }
         if (propstat.prop.resourcetype !== "") {
-          const name = content.href.split("/").at(-2);
+          const name = (0, import_path.basename)(content.href);
           if (name) {
             collections.push({
               name,
@@ -148,12 +150,13 @@ var nextdav = class {
             });
           }
         } else {
-          const name = content.href.split("/").at(-1);
+          const name = (0, import_path.basename)(content.href);
           const mime = propstat.prop.getcontenttype;
           const length = Number(propstat.prop.getcontentlength);
           if (name && mime && length) {
             files.push({
               name,
+              dirname: (0, import_path.dirname)(content.href).replace(this.url.pathname, ""),
               lastmod: propstat.prop.getlastmodified,
               mime,
               length,
@@ -166,3 +169,6 @@ var nextdav = class {
     return [collections, files];
   }
 };
+
+// src/index.ts
+var src_default = nextdav;

@@ -16,6 +16,7 @@ interface Collection {
 }
 interface File {
     name: string;
+    dirname: string;
     lastmod?: Date;
     mime: string;
     length: number;
@@ -43,4 +44,4 @@ declare class nextdav {
     private buildContentsObject;
 }
 
-export { nextdav as default };
+export { Collection, File, Options, Proxy, SocksProxy, nextdav as default };

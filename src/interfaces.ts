@@ -42,6 +42,7 @@ export interface Collection {
 
 export interface File {
   name: string;
+  dirname: string;
   lastmod?: Date;
   mime: string;
   length: number;

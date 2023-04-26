@@ -1,6 +1,6 @@
 <img width="360" src="docs/logo.png" alt="Got">
 
-> A WebDav client specifically created for Nextcloud
+> A WebDav node.js client
 
 ---
 
@@ -20,7 +20,7 @@ npm add nextdav
 ```js
 import nextdav from 'nextdav';
 
-// Create a client with your nextcloud username and password
+// Create a client with your server username and password (ie: Nextcloud webdav server)
 const client = new nextdav(
   'https://<nextcloudhost>/remote.php/dav/files/xxxxxx',
   'yourusername',

@@ -17,7 +17,12 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "npm run build -- --watch"
   },
-  "keywords": [],
+  "keywords": [
+    "webdav",
+    "client",
+    "nextcloud",
+    "library"
+  ],
   "author": "Daniele Lenares <daniele@lenares.me>",
   "license": "ISC",
   "dependencies": {

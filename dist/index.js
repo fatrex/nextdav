@@ -1,49 +1,14 @@
-"use strict";
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// src/index.ts
-var src_exports = {};
-__export(src_exports, {
-  default: () => src_default
-});
-module.exports = __toCommonJS(src_exports);
-
 // src/nextdav.class.ts
-var import_url = require("url");
-var import_path = require("path");
-var import_fast_xml_parser = require("fast-xml-parser");
-var import_http_proxy_agent = __toESM(require("http-proxy-agent"));
-var import_https_proxy_agent = __toESM(require("https-proxy-agent"));
-var import_socks_proxy_agent = require("socks-proxy-agent");
+import { URL } from "url";
+import { join, basename, dirname } from "path";
+import got from "got";
+import { XMLParser } from "fast-xml-parser";
+import HttpProxyAgent from "http-proxy-agent";
+import HttpsProxyAgent from "https-proxy-agent";
+import { SocksProxyAgent } from "socks-proxy-agent";
 var nextdav = class {
   constructor(url, username, password, options) {
-    this.url = new import_url.URL(url);
+    this.url = new URL(url);
     this.options = options;
     this.basicAuth = Buffer.from(`${username}:${password}`).toString("base64");
   }
@@ -52,29 +17,28 @@ var nextdav = class {
    */
   async getClient() {
     var _a, _b;
-    const gotModule = await import("got");
     let httpAgent;
     let httpsAgent;
     if ((_a = this.options) == null ? void 0 : _a.proxy) {
       switch (this.options.proxy.protocol) {
         case "http":
-          httpAgent = (0, import_http_proxy_agent.default)({
+          httpAgent = HttpProxyAgent({
             host: this.options.proxy.host,
             port: this.options.proxy.port
           });
           break;
         case "https":
-          httpsAgent = (0, import_https_proxy_agent.default)({
+          httpsAgent = HttpsProxyAgent({
             host: this.options.proxy.host,
             port: this.options.proxy.port
           });
           break;
         case "socks4":
         case "socks5":
-          httpAgent = new import_socks_proxy_agent.SocksProxyAgent(
+          httpAgent = new SocksProxyAgent(
             `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`
           );
-          httpsAgent = new import_socks_proxy_agent.SocksProxyAgent(
+          httpsAgent = new SocksProxyAgent(
             `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`
           );
           break;
@@ -88,7 +52,7 @@ var nextdav = class {
         httpsAgent = this.options.customAgents.https;
       }
     }
-    return gotModule.default.extend({
+    return got.extend({
       headers: {
         Authorization: `Basic ${this.basicAuth}`
       },
@@ -102,7 +66,7 @@ var nextdav = class {
    * Retrive contents of the provided folder
    */
   async getCollectionContents(path = "/") {
-    const fullUrl = (0, import_path.join)(this.url.href, path);
+    const fullUrl = join(this.url.href, path);
     const client = await this.getClient();
     try {
       const rawResponse = await client(fullUrl, {
@@ -118,7 +82,7 @@ var nextdav = class {
    * Download file as buffer
    */
   async getFileAsBuffer(path) {
-    const fullUrl = (0, import_path.join)(this.url.href, path);
+    const fullUrl = join(this.url.href, path);
     const client = await this.getClient();
     try {
       const response = await client.get(fullUrl);
@@ -129,7 +93,7 @@ var nextdav = class {
     }
   }
   parseXml(xmlData) {
-    const parser = new import_fast_xml_parser.XMLParser({
+    const parser = new XMLParser({
       ignoreAttributes: false,
       updateTag(tagName) {
         return tagName.replace("d:", "");
@@ -156,7 +120,7 @@ var nextdav = class {
           propstat = content.propstat;
         }
         if (propstat.prop.resourcetype !== "") {
-          const name = (0, import_path.basename)(content.href);
+          const name = basename(content.href);
           if (name) {
             collections.push({
               name,
@@ -164,13 +128,13 @@ var nextdav = class {
             });
           }
         } else {
-          const name = (0, import_path.basename)(content.href);
+          const name = basename(content.href);
           const mime = propstat.prop.getcontenttype;
           const length = Number(propstat.prop.getcontentlength);
           if (name && mime && length) {
             files.push({
               name,
-              dirname: (0, import_path.dirname)(content.href).replace(this.url.pathname, ""),
+              dirname: dirname(content.href).replace(this.url.pathname, ""),
               lastmod: propstat.prop.getlastmodified,
               mime,
               length,
@@ -186,3 +150,6 @@ var nextdav = class {
 
 // src/index.ts
 var src_default = nextdav;
+export {
+  src_default as default
+};

@@ -2,7 +2,7 @@ import { URL } from 'url';
 import { join, basename, dirname } from 'path';
 import http from 'http';
 import https from 'https';
-import { Got, Method } from 'got';
+import got, { Got, Method } from 'got';
 import { XMLParser } from 'fast-xml-parser';
 import HttpProxyAgent from 'http-proxy-agent';
 import HttpsProxyAgent from 'https-proxy-agent';
@@ -36,8 +36,6 @@ export default class nextdav {
    * Create WebDav client
    */
   private async getClient(): Promise<Got> {
-    const gotModule = await import('got');
-
     let httpAgent: http.Agent | false | undefined;
     let httpsAgent: https.Agent | false | undefined;
 
@@ -76,7 +74,7 @@ export default class nextdav {
       }
     }
 
-    return gotModule.default.extend({
+    return got.extend({
       headers: {
         Authorization: `Basic ${this.basicAuth}`,
       },

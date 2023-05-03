@@ -2,18 +2,19 @@
   "name": "nextdav",
   "version": "0.0.14-dev",
   "description": "A WebDav client specifically created for Nextcloud",
+  "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "ava",
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "npm run build -- --watch"
   },
@@ -34,8 +35,11 @@
   },
   "devDependencies": {
     "@types/node": "^18.15.12",
+    "ava": "^5.2.0",
     "prettier": "2.8.7",
+    "ts-node": "^10.9.1",
     "tsup": "^6.7.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "webdav-server": "^2.6.2"
   }
 }

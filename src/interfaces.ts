@@ -1,5 +1,13 @@
+import { Got } from 'got';
 import http from 'http';
 import https from 'https';
+
+export interface Nextdav {
+  getCollectionContents(
+    path: string,
+  ): Promise<[Collection[], File[]] | boolean>;
+  getFileAsBuffer(path: string): Promise<Buffer | false>;
+}
 
 export interface XMLPropstat {
   prop: {

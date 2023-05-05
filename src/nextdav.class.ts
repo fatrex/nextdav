@@ -10,13 +10,14 @@ import { SocksProxyAgent } from 'socks-proxy-agent';
 import {
   Collection,
   File,
+  Nextdav,
   Options,
   XMLBody,
   XMLPropstat,
   XMLResponse,
 } from './interfaces.js';
 
-export default class nextdav {
+export default class nextdav implements Nextdav {
   private url: URL;
   private options?: Options;
   private basicAuth: string;

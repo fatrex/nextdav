@@ -1,6 +1,10 @@
 import http from 'http';
 import https from 'https';
 
+interface Nextdav {
+    getCollectionContents(path: string): Promise<[Collection[], File[]] | boolean>;
+    getFileAsBuffer(path: string): Promise<Buffer | false>;
+}
 interface Proxy {
     host: string;
     port: number;
@@ -26,11 +30,11 @@ interface File {
     extension: string;
 }
 
-declare class nextdav {
+declare class nextdav implements Nextdav {
     private url;
     private options?;
-    private basicAuth;
-    constructor(url: string, username: string, password: string, options?: Options);
+    private basicAuth?;
+    constructor(url: string, username?: string, password?: string, options?: Options);
     /**
      * Create WebDav client
      */
@@ -47,4 +51,4 @@ declare class nextdav {
     private buildContentsObject;
 }
 
-export { Collection, File, Options, Proxy, nextdav as default };
+export { Collection, File, Nextdav, Options, Proxy, nextdav as default };

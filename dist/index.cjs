@@ -46,7 +46,11 @@ var nextdav = class {
   constructor(url, username, password, options) {
     this.url = new import_url.URL(url);
     this.options = options;
-    this.basicAuth = Buffer.from(`${username}:${password}`).toString("base64");
+    if (username && password) {
+      this.basicAuth = Buffer.from(`${username}:${password}`).toString(
+        "base64"
+      );
+    }
   }
   /**
    * Create WebDav client
@@ -55,6 +59,7 @@ var nextdav = class {
     var _a, _b;
     let httpAgent;
     let httpsAgent;
+    const headers = {};
     if ((_a = this.options) == null ? void 0 : _a.proxy) {
       switch (this.options.proxy.protocol) {
         case "http":
@@ -88,10 +93,11 @@ var nextdav = class {
         httpsAgent = this.options.customAgents.https;
       }
     }
+    if (this.basicAuth) {
+      headers["Authorization"] = `Basic ${this.basicAuth}`;
+    }
     return import_got.default.extend({
-      headers: {
-        Authorization: `Basic ${this.basicAuth}`
-      },
+      headers,
       agent: {
         https: httpsAgent,
         http: httpAgent

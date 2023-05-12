@@ -20,17 +20,21 @@ import {
 export default class nextdav implements Nextdav {
   private url: URL;
   private options?: Options;
-  private basicAuth: string;
+  private basicAuth?: string;
 
   constructor(
     url: string,
-    username: string,
-    password: string,
+    username?: string,
+    password?: string,
     options?: Options,
   ) {
     this.url = new URL(url);
     this.options = options;
-    this.basicAuth = Buffer.from(`${username}:${password}`).toString('base64');
+    if (username && password) {
+      this.basicAuth = Buffer.from(`${username}:${password}`).toString(
+        'base64',
+      );
+    }
   }
 
   /**
@@ -39,6 +43,7 @@ export default class nextdav implements Nextdav {
   private async getClient(): Promise<Got> {
     let httpAgent: http.Agent | false | undefined;
     let httpsAgent: https.Agent | false | undefined;
+    const headers: any = {};
 
     if (this.options?.proxy) {
       switch (this.options.proxy.protocol) {
@@ -75,10 +80,12 @@ export default class nextdav implements Nextdav {
       }
     }
 
+    if (this.basicAuth) {
+      headers['Authorization'] = `Basic ${this.basicAuth}`;
+    }
+
     return got.extend({
-      headers: {
-        Authorization: `Basic ${this.basicAuth}`,
-      },
+      headers,
       agent: {
         https: httpsAgent,
         http: httpAgent,

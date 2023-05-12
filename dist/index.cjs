@@ -35,6 +35,7 @@ __export(src_exports, {
 module.exports = __toCommonJS(src_exports);
 
 // src/nextdav.class.ts
+var import_roarr = require("roarr");
 var import_url = require("url");
 var import_path = require("path");
 var import_got = __toESM(require("got"), 1);
@@ -116,7 +117,7 @@ var nextdav = class {
       });
       return this.buildContentsObject(rawResponse.body.toString());
     } catch (error) {
-      console.error("[nextdav error] " + error);
+      (0, import_roarr.Roarr)({ application: "nextdav" }, error.toString());
       return false;
     }
   }
@@ -130,7 +131,7 @@ var nextdav = class {
       const response = await client.get(fullUrl);
       return response.rawBody;
     } catch (error) {
-      console.error("[nextdav error] " + error);
+      (0, import_roarr.Roarr)({ application: "nextdav" }, error.toString());
       return false;
     }
   }

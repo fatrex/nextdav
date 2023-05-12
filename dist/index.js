@@ -1,4 +1,5 @@
 // src/nextdav.class.ts
+import { Roarr as debug } from "roarr";
 import { URL } from "url";
 import { join, basename, dirname } from "path";
 import got from "got";
@@ -80,7 +81,7 @@ var nextdav = class {
       });
       return this.buildContentsObject(rawResponse.body.toString());
     } catch (error) {
-      console.error("[nextdav error] " + error);
+      debug({ application: "nextdav" }, error.toString());
       return false;
     }
   }
@@ -94,7 +95,7 @@ var nextdav = class {
       const response = await client.get(fullUrl);
       return response.rawBody;
     } catch (error) {
-      console.error("[nextdav error] " + error);
+      debug({ application: "nextdav" }, error.toString());
       return false;
     }
   }

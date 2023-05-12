@@ -1,3 +1,4 @@
+import { Roarr as debug } from 'roarr';
 import { URL } from 'url';
 import { join, basename, dirname } from 'path';
 import http from 'http';
@@ -106,8 +107,8 @@ export default class nextdav implements Nextdav {
         method: 'PROPFIND' as Method,
       });
       return this.buildContentsObject(rawResponse.body.toString());
-    } catch (error) {
-      console.error('[nextdav error] ' + error + '');
+    } catch (error: any) {
+      debug({ application: 'nextdav' }, error.toString());
       return false;
     }
   }
@@ -121,8 +122,8 @@ export default class nextdav implements Nextdav {
     try {
       const response = await client.get(fullUrl);
       return response.rawBody;
-    } catch (error) {
-      console.error('[nextdav error] ' + error);
+    } catch (error: any) {
+      debug({ application: 'nextdav' }, error.toString());
       return false;
     }
   }

@@ -1,11 +1,8 @@
 <img width="360" src="docs/logo.png" alt="Got">
 
-> A WebDav node.js client
+> A WebDav client for [Node.js](https://nodejs.org/en)
 
 ---
-
-> **⚠ WARNING:**  
-> **This packages is still under heavy development so use at your own risk!**
 
 ### Installation
 
@@ -22,7 +19,7 @@ import nextdav from 'nextdav';
 
 // Create a client with your server username and password (ie: Nextcloud webdav server)
 const client = new nextdav(
-  'https://<nextcloudhost>/remote.php/dav/files/xxxxxx',
+  'http://webdavhost.test',
   'yourusername', // If any
   'yourpassword', // If any
 );

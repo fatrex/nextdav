@@ -16,7 +16,8 @@
   "scripts": {
     "test": "c8 ava",
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-    "dev": "npm run build -- --watch"
+    "dev": "npm run build -- --watch",
+    "release": "release-it"
   },
   "keywords": [
     "webdav",
@@ -39,6 +40,7 @@
     "ava": "^5.2.0",
     "c8": "^7.13.0",
     "prettier": "2.8.7",
+    "release-it": "^15.10.3",
     "ts-node": "^10.9.1",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4",

@@ -23,8 +23,8 @@ import nextdav from 'nextdav';
 // Create a client with your server username and password (ie: Nextcloud webdav server)
 const client = new nextdav(
   'https://<nextcloudhost>/remote.php/dav/files/xxxxxx',
-  'yourusername',
-  'yourpassword',
+  'yourusername', // If any
+  'yourpassword', // If any
 );
 
 // Retrieve collections(directories) and files lists
@@ -34,6 +34,15 @@ if (response) {
 }
 ```
 
+This lib is using [Roarr](https://github.com/gajus/roarr) as a debugging library. If you want to print debug logs you must prepend your starting script with `ROARR_LOG=true`
+
+### Tests
+
+- [x] Client connect to server with auth
+- [x] Client connect to server without auth
+- [ ] Client retrieves collections list
+- [ ] Client retrieves files list
+
 ### TODO
 
 - [x] Base client instance
@@ -41,4 +50,3 @@ if (response) {
 - [x] Files download
 - [ ] Files upload
 - [ ] Files update and locks
-- [ ] Tests!

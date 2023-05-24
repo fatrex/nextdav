@@ -9,7 +9,7 @@
 As simple as
 
 ```bash
-npm add nextdav
+npm add @fatrex/nextdav
 ```
 
 ### Usage

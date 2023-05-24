@@ -38,7 +38,7 @@ test.serial(
     await setup();
     const instance = new nextdav('http://localhost:1900');
     // ACT
-    const actual = await instance.getCollectionContents();
+    const actual = await instance.getFolderContents();
     // ASSERT
     const expect = [[], []];
     t.deepEqual(actual, expect);
@@ -54,7 +54,7 @@ test.serial(
     await setup(true);
     const instance = new nextdav('http://localhost:1900', 'demo', 'demo');
     // ACT
-    const actual = await instance.getCollectionContents();
+    const actual = await instance.getFolderContents();
     // ASSERT
     const expect = [[], []];
     t.deepEqual(actual, expect);
@@ -70,7 +70,7 @@ test.serial(
     await setup(true);
     const instance = new nextdav('http://localhost:1900', 'demo', 'demoTest');
     // ACT
-    const actual = await instance.getCollectionContents();
+    const actual = await instance.getFolderContents();
     // ASSERT
     const expect = false;
     t.deepEqual(actual, expect);

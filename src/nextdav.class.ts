@@ -97,7 +97,7 @@ export default class nextdav implements Nextdav {
   /**
    * Retrive contents of the provided folder
    */
-  async getCollectionContents(
+  async getFolderContents(
     path = '/',
   ): Promise<[Collection[], File[]] | boolean> {
     const fullUrl = join(this.url.href, path);

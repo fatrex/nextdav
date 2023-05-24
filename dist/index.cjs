@@ -108,7 +108,7 @@ var nextdav = class {
   /**
    * Retrive contents of the provided folder
    */
-  async getCollectionContents(path = "/") {
+  async getFolderContents(path = "/") {
     const fullUrl = (0, import_path.join)(this.url.href, path);
     const client = await this.getClient();
     try {

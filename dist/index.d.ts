@@ -2,7 +2,7 @@ import http from 'http';
 import https from 'https';
 
 interface Nextdav {
-    getCollectionContents(path: string): Promise<[Collection[], File[]] | boolean>;
+    getFolderContents(path: string): Promise<[Collection[], File[]] | boolean>;
     getFileAsBuffer(path: string): Promise<Buffer | false>;
 }
 interface Proxy {
@@ -42,7 +42,7 @@ declare class nextdav implements Nextdav {
     /**
      * Retrive contents of the provided folder
      */
-    getCollectionContents(path?: string): Promise<[Collection[], File[]] | boolean>;
+    getFolderContents(path?: string): Promise<[Collection[], File[]] | boolean>;
     /**
      * Download file as buffer
      */

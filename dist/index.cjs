@@ -139,7 +139,7 @@ var nextdav = class {
     const parser = new import_fast_xml_parser.XMLParser({
       ignoreAttributes: false,
       updateTag(tagName) {
-        return tagName.replace("d:", "");
+        return tagName.replace("d:", "").replace("D:", "");
       }
     });
     return parser.parse(xmlData);
@@ -177,7 +177,7 @@ var nextdav = class {
           if (name && mime && length) {
             files.push({
               name,
-              dirname: (0, import_path.dirname)(content.href).replace(this.url.pathname, ""),
+              dirname: (0, import_path.dirname)(content.href).replace(this.url.href, "/"),
               lastmod: propstat.prop.getlastmodified,
               mime,
               length,

@@ -174,7 +174,7 @@ export default class nextdav implements Nextdav {
           if (name && mime && length) {
             files.push({
               name,
-              dirname: dirname(content.href).replace(this.url.pathname, ''),
+              dirname: dirname(content.href).replace(this.url.href, '/'),
               lastmod: propstat.prop.getlastmodified,
               mime,
               length,

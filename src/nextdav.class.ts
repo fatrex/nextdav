@@ -132,7 +132,7 @@ export default class nextdav implements Nextdav {
     const parser = new XMLParser({
       ignoreAttributes: false,
       updateTag(tagName) {
-        return tagName.replace('d:', '');
+        return tagName.replace('d:', '').replace('D:', '');
       },
     });
     return parser.parse(xmlData);

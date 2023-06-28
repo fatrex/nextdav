@@ -13,8 +13,8 @@ interface Proxy {
 interface Options {
     proxy?: Proxy;
     customAgents?: {
-        http: http.Agent;
-        https: https.Agent;
+        http?: http.Agent;
+        https?: https.Agent;
     };
 }
 interface Collection {

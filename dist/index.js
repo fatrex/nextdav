@@ -27,14 +27,17 @@ var nextdav = class {
     const headers = {};
     if ((_a = this.options) == null ? void 0 : _a.proxy) {
       switch (this.options.proxy.protocol) {
+        default:
         case "http":
           httpAgent = HttpProxyAgent({
+            protocol: "http",
             host: this.options.proxy.host,
             port: this.options.proxy.port
           });
           break;
         case "https":
           httpsAgent = HttpsProxyAgent({
+            protocol: "https",
             host: this.options.proxy.host,
             port: this.options.proxy.port
           });
@@ -60,6 +63,9 @@ var nextdav = class {
     }
     if (this.basicAuth) {
       headers["Authorization"] = `Basic ${this.basicAuth}`;
+    }
+    if (httpsAgent !== void 0 || httpAgent !== void 0) {
+      debug({ application: "nextdav" }, "Using custom agents");
     }
     return got.extend({
       headers,

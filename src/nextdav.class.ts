@@ -42,20 +42,23 @@ export default class nextdav implements Nextdav {
    * Create WebDav client
    */
   private async getClient(): Promise<Got> {
-    let httpAgent: http.Agent | false | undefined;
-    let httpsAgent: https.Agent | false | undefined;
+    let httpAgent: http.Agent | undefined;
+    let httpsAgent: https.Agent | undefined;
     const headers: any = {};
 
     if (this.options?.proxy) {
       switch (this.options.proxy.protocol) {
+        default:
         case 'http':
           httpAgent = HttpProxyAgent({
+            protocol: 'http',
             host: this.options.proxy.host,
             port: this.options.proxy.port,
           });
           break;
         case 'https':
           httpsAgent = HttpsProxyAgent({
+            protocol: 'https',
             host: this.options.proxy.host,
             port: this.options.proxy.port,
           });
@@ -83,6 +86,10 @@ export default class nextdav implements Nextdav {
 
     if (this.basicAuth) {
       headers['Authorization'] = `Basic ${this.basicAuth}`;
+    }
+
+    if (httpsAgent !== undefined || httpAgent !== undefined) {
+      debug({ application: 'nextdav' }, 'Using custom agents');
     }
 
     return got.extend({

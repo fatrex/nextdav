@@ -1,6 +1,6 @@
 {
   "name": "@fatrex/nextdav",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A WebDav client specifically created for Nextcloud",
   "type": "module",
   "main": "./dist/index.js",

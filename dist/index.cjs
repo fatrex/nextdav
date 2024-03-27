@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -10,46 +10,58 @@ var __export = (target, all) => {
     __defProp(target, name, { get: all[name], enumerable: true });
 };
 var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
+  if ((from && typeof from === 'object') || typeof from === 'function') {
     for (let key of __getOwnPropNames(from))
       if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+        __defProp(to, key, {
+          get: () => from[key],
+          enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable,
+        });
   }
   return to;
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __toESM = (mod, isNodeMode, target) => (
+  (target = mod != null ? __create(__getProtoOf(mod)) : {}),
+  __copyProps(
+    // If the importer is in node compatibility mode or this is not an ESM
+    // file that has been converted to a CommonJS file using a Babel-
+    // compatible transform (i.e. "__esModule" has not been set), then set
+    // "default" to the CommonJS "module.exports" for node compatibility.
+    isNodeMode || !mod || !mod.__esModule
+      ? __defProp(target, 'default', { value: mod, enumerable: true })
+      : target,
+    mod,
+  )
+);
+var __toCommonJS = (mod) =>
+  __copyProps(__defProp({}, '__esModule', { value: true }), mod);
 
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  default: () => src_default
+  default: () => src_default,
 });
 module.exports = __toCommonJS(src_exports);
 
 // src/nextdav.class.ts
-var import_roarr = require("roarr");
-var import_url = require("url");
-var import_path = require("path");
-var import_got = __toESM(require("got"), 1);
-var import_fast_xml_parser = require("fast-xml-parser");
-var import_http_proxy_agent = __toESM(require("http-proxy-agent"), 1);
-var import_https_proxy_agent = __toESM(require("https-proxy-agent"), 1);
-var import_socks_proxy_agent = require("socks-proxy-agent");
+var import_roarr = require('roarr');
+var import_url = require('url');
+var import_path = require('path');
+var import_got = __toESM(require('got'), 1);
+var import_fast_xml_parser = require('fast-xml-parser');
+var import_http_proxy_agent = require('http-proxy-agent');
+var import_https_proxy_agent = require('https-proxy-agent');
+var import_socks_proxy_agent = require('socks-proxy-agent');
 var nextdav = class {
+  url;
+  options;
+  basicAuth;
   constructor(url, username, password, options) {
     this.url = new import_url.URL(url);
     this.options = options;
     if (username && password) {
       this.basicAuth = Buffer.from(`${username}:${password}`).toString(
-        "base64"
+        'base64',
       );
     }
   }
@@ -64,27 +76,29 @@ var nextdav = class {
     if ((_a = this.options) == null ? void 0 : _a.proxy) {
       switch (this.options.proxy.protocol) {
         default:
-        case "http":
-          httpAgent = (0, import_http_proxy_agent.default)({
-            protocol: "http",
-            host: this.options.proxy.host,
-            port: this.options.proxy.port
-          });
+        case 'http':
+          httpAgent = new import_http_proxy_agent.HttpProxyAgent(
+            `http://${this.options.proxy.host}`,
+            {
+              port: this.options.proxy.port,
+            },
+          );
           break;
-        case "https":
-          httpsAgent = (0, import_https_proxy_agent.default)({
-            protocol: "https",
-            host: this.options.proxy.host,
-            port: this.options.proxy.port
-          });
+        case 'https':
+          httpsAgent = new import_https_proxy_agent.HttpsProxyAgent(
+            `https://${this.options.proxy.host}`,
+            {
+              port: this.options.proxy.port,
+            },
+          );
           break;
-        case "socks4":
-        case "socks5":
+        case 'socks4':
+        case 'socks5':
           httpAgent = new import_socks_proxy_agent.SocksProxyAgent(
-            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`
+            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`,
           );
           httpsAgent = new import_socks_proxy_agent.SocksProxyAgent(
-            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`
+            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`,
           );
           break;
       }
@@ -98,32 +112,35 @@ var nextdav = class {
       }
     }
     if (this.basicAuth) {
-      headers["Authorization"] = `Basic ${this.basicAuth}`;
+      headers['Authorization'] = `Basic ${this.basicAuth}`;
     }
     if (httpsAgent !== void 0 || httpAgent !== void 0) {
-      (0, import_roarr.Roarr)({ application: "nextdav" }, "Using custom agents");
+      (0, import_roarr.Roarr)(
+        { application: 'nextdav' },
+        'Using custom agents',
+      );
     }
     return import_got.default.extend({
       headers,
       agent: {
         https: httpsAgent,
-        http: httpAgent
-      }
+        http: httpAgent,
+      },
     });
   }
   /**
    * Retrive contents of the provided folder
    */
-  async getFolderContents(path = "/") {
+  async getFolderContents(path = '/') {
     const fullUrl = (0, import_path.join)(this.url.href, path);
     const client = await this.getClient();
     try {
       const rawResponse = await client(fullUrl, {
-        method: "PROPFIND"
+        method: 'PROPFIND',
       });
       return this.buildContentsObject(rawResponse.body.toString());
     } catch (error) {
-      (0, import_roarr.Roarr)({ application: "nextdav" }, error.toString());
+      (0, import_roarr.Roarr)({ application: 'nextdav' }, error.toString());
       return false;
     }
   }
@@ -137,7 +154,7 @@ var nextdav = class {
       const response = await client.get(fullUrl);
       return response.rawBody;
     } catch (error) {
-      (0, import_roarr.Roarr)({ application: "nextdav" }, error.toString());
+      (0, import_roarr.Roarr)({ application: 'nextdav' }, error.toString());
       return false;
     }
   }
@@ -145,8 +162,8 @@ var nextdav = class {
     const parser = new import_fast_xml_parser.XMLParser({
       ignoreAttributes: false,
       updateTag(tagName) {
-        return tagName.replace("d:", "").replace("D:", "");
-      }
+        return tagName.replace('d:', '').replace('D:', '');
+      },
     });
     return parser.parse(xmlData);
   }
@@ -168,12 +185,12 @@ var nextdav = class {
         } else {
           propstat = content.propstat;
         }
-        if (propstat.prop.resourcetype !== "") {
+        if (propstat.prop.resourcetype !== '') {
           const name = (0, import_path.basename)(content.href);
           if (name) {
             collections.push({
               name,
-              lastmod: propstat.prop.getlastmodified
+              lastmod: propstat.prop.getlastmodified,
             });
           }
         } else {
@@ -183,11 +200,14 @@ var nextdav = class {
           if (name && mime && length) {
             files.push({
               name,
-              dirname: (0, import_path.dirname)(content.href).replace(this.url.href, "/"),
+              dirname: (0, import_path.dirname)(content.href).replace(
+                this.url.href,
+                '/',
+              ),
               lastmod: propstat.prop.getlastmodified,
               mime,
               length,
-              extension: name.split(".").at(-1) || ""
+              extension: name.split('.').at(-1) || '',
             });
           }
         }

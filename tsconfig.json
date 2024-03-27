@@ -9,7 +9,7 @@
     "lib": ["esnext"],
     "listEmittedFiles": false,
     "listFiles": false,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "noFallthroughCasesInSwitch": true,
     "pretty": true,
     "resolveJsonModule": true,
@@ -18,7 +18,7 @@
     "strict": true,
     "traceResolution": false,
     "types": ["node"],
-    "module": "Node16"
+    "module": "ES6"
   },
   "compileOnSave": false,
   "exclude": ["node_modules", "dist"],

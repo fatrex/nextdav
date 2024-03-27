@@ -1,19 +1,22 @@
 // src/nextdav.class.ts
-import { Roarr as debug } from "roarr";
-import { URL } from "url";
-import { join, basename, dirname } from "path";
-import got from "got";
-import { XMLParser } from "fast-xml-parser";
-import HttpProxyAgent from "http-proxy-agent";
-import HttpsProxyAgent from "https-proxy-agent";
-import { SocksProxyAgent } from "socks-proxy-agent";
+import { Roarr as debug } from 'roarr';
+import { URL } from 'url';
+import { join, basename, dirname } from 'path';
+import got from 'got';
+import { XMLParser } from 'fast-xml-parser';
+import { HttpProxyAgent } from 'http-proxy-agent';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+import { SocksProxyAgent } from 'socks-proxy-agent';
 var nextdav = class {
+  url;
+  options;
+  basicAuth;
   constructor(url, username, password, options) {
     this.url = new URL(url);
     this.options = options;
     if (username && password) {
       this.basicAuth = Buffer.from(`${username}:${password}`).toString(
-        "base64"
+        'base64',
       );
     }
   }
@@ -28,27 +31,26 @@ var nextdav = class {
     if ((_a = this.options) == null ? void 0 : _a.proxy) {
       switch (this.options.proxy.protocol) {
         default:
-        case "http":
-          httpAgent = HttpProxyAgent({
-            protocol: "http",
-            host: this.options.proxy.host,
-            port: this.options.proxy.port
+        case 'http':
+          httpAgent = new HttpProxyAgent(`http://${this.options.proxy.host}`, {
+            port: this.options.proxy.port,
           });
           break;
-        case "https":
-          httpsAgent = HttpsProxyAgent({
-            protocol: "https",
-            host: this.options.proxy.host,
-            port: this.options.proxy.port
-          });
+        case 'https':
+          httpsAgent = new HttpsProxyAgent(
+            `https://${this.options.proxy.host}`,
+            {
+              port: this.options.proxy.port,
+            },
+          );
           break;
-        case "socks4":
-        case "socks5":
+        case 'socks4':
+        case 'socks5':
           httpAgent = new SocksProxyAgent(
-            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`
+            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`,
           );
           httpsAgent = new SocksProxyAgent(
-            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`
+            `${this.options.proxy.protocol}://${this.options.proxy.host}:${this.options.proxy.port}`,
           );
           break;
       }
@@ -62,32 +64,32 @@ var nextdav = class {
       }
     }
     if (this.basicAuth) {
-      headers["Authorization"] = `Basic ${this.basicAuth}`;
+      headers['Authorization'] = `Basic ${this.basicAuth}`;
     }
     if (httpsAgent !== void 0 || httpAgent !== void 0) {
-      debug({ application: "nextdav" }, "Using custom agents");
+      debug({ application: 'nextdav' }, 'Using custom agents');
     }
     return got.extend({
       headers,
       agent: {
         https: httpsAgent,
-        http: httpAgent
-      }
+        http: httpAgent,
+      },
     });
   }
   /**
    * Retrive contents of the provided folder
    */
-  async getFolderContents(path = "/") {
+  async getFolderContents(path = '/') {
     const fullUrl = join(this.url.href, path);
     const client = await this.getClient();
     try {
       const rawResponse = await client(fullUrl, {
-        method: "PROPFIND"
+        method: 'PROPFIND',
       });
       return this.buildContentsObject(rawResponse.body.toString());
     } catch (error) {
-      debug({ application: "nextdav" }, error.toString());
+      debug({ application: 'nextdav' }, error.toString());
       return false;
     }
   }
@@ -101,7 +103,7 @@ var nextdav = class {
       const response = await client.get(fullUrl);
       return response.rawBody;
     } catch (error) {
-      debug({ application: "nextdav" }, error.toString());
+      debug({ application: 'nextdav' }, error.toString());
       return false;
     }
   }
@@ -109,8 +111,8 @@ var nextdav = class {
     const parser = new XMLParser({
       ignoreAttributes: false,
       updateTag(tagName) {
-        return tagName.replace("d:", "").replace("D:", "");
-      }
+        return tagName.replace('d:', '').replace('D:', '');
+      },
     });
     return parser.parse(xmlData);
   }
@@ -132,12 +134,12 @@ var nextdav = class {
         } else {
           propstat = content.propstat;
         }
-        if (propstat.prop.resourcetype !== "") {
+        if (propstat.prop.resourcetype !== '') {
           const name = basename(content.href);
           if (name) {
             collections.push({
               name,
-              lastmod: propstat.prop.getlastmodified
+              lastmod: propstat.prop.getlastmodified,
             });
           }
         } else {
@@ -147,11 +149,11 @@ var nextdav = class {
           if (name && mime && length) {
             files.push({
               name,
-              dirname: dirname(content.href).replace(this.url.href, "/"),
+              dirname: dirname(content.href).replace(this.url.href, '/'),
               lastmod: propstat.prop.getlastmodified,
               mime,
               length,
-              extension: name.split(".").at(-1) || ""
+              extension: name.split('.').at(-1) || '',
             });
           }
         }
@@ -163,6 +165,4 @@ var nextdav = class {
 
 // src/index.ts
 var src_default = nextdav;
-export {
-  src_default as default
-};
+export { src_default as default };

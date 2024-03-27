@@ -5,8 +5,8 @@ import http from 'http';
 import https from 'https';
 import got, { Got, Method } from 'got';
 import { XMLParser } from 'fast-xml-parser';
-import HttpProxyAgent from 'http-proxy-agent';
-import HttpsProxyAgent from 'https-proxy-agent';
+import { HttpProxyAgent } from 'http-proxy-agent';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import {
   Collection,
@@ -50,18 +50,17 @@ export default class nextdav implements Nextdav {
       switch (this.options.proxy.protocol) {
         default:
         case 'http':
-          httpAgent = HttpProxyAgent({
-            protocol: 'http',
-            host: this.options.proxy.host,
+          httpAgent = new HttpProxyAgent(`http://${this.options.proxy.host}`, {
             port: this.options.proxy.port,
           });
           break;
         case 'https':
-          httpsAgent = HttpsProxyAgent({
-            protocol: 'https',
-            host: this.options.proxy.host,
-            port: this.options.proxy.port,
-          });
+          httpsAgent = new HttpsProxyAgent(
+            `https://${this.options.proxy.host}`,
+            {
+              port: this.options.proxy.port,
+            },
+          );
           break;
         case 'socks4':
         case 'socks5':

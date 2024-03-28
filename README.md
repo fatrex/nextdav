@@ -37,8 +37,8 @@ This lib is using [Roarr](https://github.com/gajus/roarr) as a debugging library
 
 - [x] Client connect to server with auth
 - [x] Client connect to server without auth
-- [ ] Client retrieves collections list
-- [ ] Client retrieves files list
+- [x] Client retrieves collections list
+- [x] Client retrieves files list
 
 ### TODO
 

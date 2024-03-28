@@ -154,7 +154,7 @@ export default class nextdav implements Nextdav {
         // This means there's only the root folder so no othe content is available
         nonRootContents = [];
       } else {
-        // There are other entries besides the root folder that we remove from the collection
+        // There are other entries beside the root folder that we remove from the collection
         nonRootContents = data.multistatus.response.splice(1);
       }
       for (const content of nonRootContents) {
@@ -164,7 +164,6 @@ export default class nextdav implements Nextdav {
         } else {
           propstat = content.propstat;
         }
-
         if (propstat.prop.resourcetype !== '') {
           const name = basename(content.href);
           if (name) {
@@ -175,12 +174,18 @@ export default class nextdav implements Nextdav {
           }
         } else {
           const name = basename(content.href);
-          const mime = propstat.prop.getcontenttype;
+          const mime = propstat.prop.getcontenttype?.split(';').at(0);
           const length = Number(propstat.prop.getcontentlength);
-          if (name && mime && length) {
+          if (
+            name !== undefined &&
+            mime !== undefined &&
+            length !== undefined
+          ) {
             files.push({
               name,
-              dirname: dirname(content.href).replace(this.url.href, '/'),
+              dirname: content.href
+                .replace(name, '')
+                .replace(this.url.href, '/'),
               lastmod: propstat.prop.getlastmodified,
               mime,
               length,

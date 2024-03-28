@@ -29,11 +29,8 @@ async function setup(withUser = false, withFileSystem = false) {
     webdavServer
       .rootFileSystem()
       .addSubTree(webdavServer.createExternalContext(), {
-        testfolder1: {
-          'file1.txt': webdav.ResourceType.File,
-          'file2.txt': webdav.ResourceType.File,
-        },
-        'file0.txt': webdav.ResourceType.File,
+        testfolder1: webdav.ResourceType.Directory,
+        'file.txt': webdav.ResourceType.File,
       });
   }
 
@@ -43,6 +40,8 @@ async function setup(withUser = false, withFileSystem = false) {
 async function tearDown() {
   await webdavServer.stopAsync();
 }
+
+test.afterEach((t) => tearDown());
 
 test.serial(
   'Server without auth - Client can connect without credentials',
@@ -55,8 +54,6 @@ test.serial(
     // ASSERT
     const expect = [[], []];
     t.deepEqual(actual, expect);
-
-    await tearDown();
   },
 );
 
@@ -71,8 +68,6 @@ test.serial(
     // ASSERT
     const expect = [[], []];
     t.deepEqual(actual, expect);
-
-    await tearDown();
   },
 );
 
@@ -87,8 +82,6 @@ test.serial(
     // ASSERT
     const expect = false;
     t.deepEqual(actual, expect);
-
-    await tearDown();
   },
 );
 
@@ -108,16 +101,15 @@ test.serial('Client - Get folders contents', async (t) => {
     ],
     [
       {
-        name: 'file0.txt',
+        name: 'file.txt',
         dirname: '/',
         lastmod: new Date().toUTCString(),
-        mime: 'text',
+        mime: 'text/plain',
         length: 0,
         extension: 'txt',
       },
     ],
   ];
-  t.deepEqual(actual, expect);
 
-  await tearDown();
+  t.deepEqual(actual, expect);
 });
